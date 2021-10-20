@@ -10,25 +10,30 @@ export default class ImportButton extends React.Component {
 
   handleClick() {
     if (this.state.isActive) {
+      const getData = (pdf, pageNumber) => {
+        return pdf.getPage(pageNumber).then((page) => page.getTextContent());
+      };
+
       this.setState({ isActive: false });
+
       window.pdfjsLib
         .getDocument(this.props.src)
         .promise.then((pdf) => {
-          // TODO: handle multiple pages
-          // document.querySelector('#page-count').textContent = pdf.numPages;
-          pdf.getPage(1).then((page) => {
-            page.getTextContent().then((data) => {
-              // send data back to app;
-              this.props.onImport(data.items);
-              this.setState({ isActive: true });
-            });
+          const pages = Array.from(Array(pdf.numPages).keys());
+          let promises = [];
+
+          pages.forEach((pageNumber) =>
+            promises.push(getData(pdf, pageNumber + 1))
+          );
+
+          Promise.all(promises).then((result) => {
+            const data = result.reduce((prev, curr) => {
+              return prev.concat(curr.items);
+            }, []);
+
+            this.props.onImport(data);
+            this.setState({ isActive: true });
           });
-          /*pdf.getPage(2).then((page) => {
-            page.getTextContent().then((data) => {
-              // send data back to app;
-              console.log(data.items);
-            });
-          });*/
         })
         .catch((err) => {
           // TODO: handle errors
