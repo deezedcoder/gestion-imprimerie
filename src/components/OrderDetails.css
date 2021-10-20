@@ -1,0 +1,13 @@
+#order-details {
+  list-style-type: none;
+}
+
+#order-details li {
+  border-bottom: 1px solid lime;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+#order-details li div {
+  width: 100vw;
+}

@@ -1,3 +1,12 @@
 button {
-  background-color: aquamarine;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.active {
+  background-color: aqua;
+}
+
+.loading {
+  background-color: red;
 }
