@@ -23,12 +23,12 @@ export default class ImportButton extends React.Component {
               this.setState({ isActive: true });
             });
           });
-          pdf.getPage(2).then((page) => {
+          /*pdf.getPage(2).then((page) => {
             page.getTextContent().then((data) => {
               // send data back to app;
               console.log(data.items);
             });
-          });
+          });*/
         })
         .catch((err) => {
           // TODO: handle errors
