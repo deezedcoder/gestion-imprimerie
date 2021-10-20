@@ -21,9 +21,10 @@ export default class App extends React.Component {
 
   handleOrderSelect(event) {
     const currentOrderIndex = this.state.orders.findIndex(
-      (order) => (order.id = event.target.id)
+      (order) => order.id === event.target.id
     );
-    this.setState({ currentOrderIndex });
+
+    if (currentOrderIndex !== -1) this.setState({ currentOrderIndex });
   }
 
   render() {
