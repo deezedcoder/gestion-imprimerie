@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
 import './ImportButton.css';
 
 export default class ImportButton extends React.Component {
@@ -45,14 +46,14 @@ export default class ImportButton extends React.Component {
 
   render() {
     return (
-      <button
+      <Button
         onClick={this.handleClick}
         className={this.state.isActive ? 'active' : 'loading'}
       >
         {this.state.isActive
           ? 'Importer une Commande'
           : 'Importation en cours...'}
-      </button>
+      </Button>
     );
   }
 }
