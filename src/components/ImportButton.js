@@ -5,17 +5,17 @@ import './ImportButton.css';
 export default class ImportButton extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { isActive: true };
+    this.state = { isLoading: false };
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick() {
-    if (this.state.isActive) {
+    if (!this.state.isLoading) {
       const getData = (pdf, pageNumber) => {
         return pdf.getPage(pageNumber).then((page) => page.getTextContent());
       };
 
-      this.setState({ isActive: false });
+      this.setState({ isLoading: true });
 
       window.pdfjsLib
         .getDocument(this.props.src)
@@ -33,13 +33,13 @@ export default class ImportButton extends React.Component {
             }, []);
 
             this.props.onImport(data);
-            this.setState({ isActive: true });
+            this.setState({ isLoading: false });
           });
         })
         .catch((err) => {
           // TODO: handle errors
           console.log(err);
-          this.setState({ isActive: true });
+          this.setState({ isLoading: false });
         });
     }
   }
@@ -48,11 +48,12 @@ export default class ImportButton extends React.Component {
     return (
       <Button
         onClick={this.handleClick}
-        className={this.state.isActive ? 'active' : 'loading'}
+        variant={this.state.isLoading ? 'secondary' : 'primary'}
+        disabled={this.state.isLoading}
       >
-        {this.state.isActive
-          ? 'Importer une Commande'
-          : 'Importation en cours...'}
+        {this.state.isLoading
+          ? 'Importation en cours...'
+          : 'Importer une Commande'}
       </Button>
     );
   }

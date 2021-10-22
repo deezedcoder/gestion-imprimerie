@@ -2,6 +2,7 @@
 const { app, BrowserWindow, protocol } = require('electron');
 const path = require('path');
 const url = require('url');
+const mongoose = require('mongoose');
 
 // Create the native browser window.
 function createWindow() {
@@ -52,11 +53,23 @@ function setupLocalFilesNormalizerProxy() {
   );
 }
 
+async function main() {
+  await mongoose.connect('mongodb://localhost:27017/test');
+}
+
 // This method will be called when Electron has finished its initialization and
 // is ready to create the browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
+  main()
+    .then(() => {
+      const Cat = mongoose.model('Cat', { name: String });
+
+      const kitty = new Cat({ name: 'Madman' });
+      kitty.save().then(() => console.log('meow'));
+    })
+    .catch((err) => console.log(err));
   setupLocalFilesNormalizerProxy();
 
   app.on('activate', function () {
