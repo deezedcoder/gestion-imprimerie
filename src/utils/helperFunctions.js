@@ -17,6 +17,7 @@ export function parseImportedData(data) {
     },
     amount: data[AMOUNT].str,
     items: [],
+    status: "Liste d'attente",
   };
 
   if (FIRST_ITEM_INDEX !== -1) {

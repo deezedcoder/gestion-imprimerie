@@ -1,10 +1,25 @@
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.
-const { contextBridge } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
-// As an example, here we use the exposeInMainWorld API to expose the browsers
-// and node versions to the main window.
-// They'll be accessible at "window.versions".
+// whitelist channels
+const validToMain = ['connect-to-database', 'save-order'];
+const validToRender = ['connection-error'];
+
 process.once('loaded', () => {
-  contextBridge.exposeInMainWorld('versions', process.versions);
+  // Expose database API to the main window.
+  // They'll be accessible at "window.electron".
+  contextBridge.exposeInMainWorld('api', {
+    electronIpcSend: (channel, data) => {
+      if (validToMain.includes(channel)) {
+        ipcRenderer.send(channel, data);
+      }
+    },
+    receive: (channel, func) => {
+      if (validToRender.includes(channel)) {
+        // Deliberately strip event as it includes `sender`
+        ipcRenderer.on(channel, (event, ...args) => func(...args));
+      }
+    },
+  });
 });

@@ -4,19 +4,30 @@ import ImportButton from './components/ImportButton';
 import OrdersList from './components/OrdersList';
 import OrderDetails from './components/OrderDetails';
 import { parseImportedData } from './utils/helperFunctions';
+import IpcDBService from './IpcDBService';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { orders: [], currentOrderIndex: null };
+    this.ipcDB = new IpcDBService({ databaseName: 'gesimp' });
     this.handleImport = this.handleImport.bind(this);
     this.handleOrderSelect = this.handleOrderSelect.bind(this);
-    this.state = { orders: [], currentOrderIndex: null };
+  }
+
+  componentDidMount() {
+    this.ipcDB.connect();
+    // TODO handle conncetion errors
   }
 
   handleImport(data) {
+    const order = parseImportedData(data);
+
     this.setState((state) => ({
-      orders: [...state.orders, parseImportedData(data)],
+      orders: [...state.orders, order],
     }));
+
+    this.ipcDB.save({ collection: 'Orders', data: order });
   }
 
   handleOrderSelect(event) {

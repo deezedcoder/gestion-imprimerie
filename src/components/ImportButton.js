@@ -1,6 +1,5 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
-import './ImportButton.css';
+import { Button } from '@blueprintjs/core';
 
 export default class ImportButton extends React.Component {
   constructor(props) {
@@ -47,13 +46,12 @@ export default class ImportButton extends React.Component {
   render() {
     return (
       <Button
+        intent="primary"
         onClick={this.handleClick}
-        variant={this.state.isLoading ? 'secondary' : 'primary'}
         disabled={this.state.isLoading}
+        icon="document"
       >
-        {this.state.isLoading
-          ? 'Importation en cours...'
-          : 'Importer une Commande'}
+        Importer une Commande
       </Button>
     );
   }
