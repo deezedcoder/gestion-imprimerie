@@ -23,11 +23,19 @@ export default class App extends React.Component {
   handleImport(data) {
     const order = parseImportedData(data);
 
+    console.log(
+      '1',
+      this.ipcDB.exists({ collection: 'Orders', orderId: order.id })
+    );
+    //  console.log('Commande déja importée!!!');
+    //} else {
+
     this.setState((state) => ({
       orders: [...state.orders, order],
     }));
 
     this.ipcDB.save({ collection: 'Orders', data: order });
+    //}
   }
 
   handleOrderSelect(event) {

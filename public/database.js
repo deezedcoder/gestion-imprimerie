@@ -26,28 +26,28 @@ ipcMain.on('connect-to-database', (event, databaseName) => {
   mongoose
     .connect(`mongodb://localhost:27017/${databaseName}`)
     .then(() => {
-      event.reply('connected');
+      event.returnValue = true;
     })
-    .catch((err) => {});
+    .catch((err) => {
+      event.returnValue = err;
+    });
 });
 
 ipcMain.on('save-order', (event, { collection, data }) => {
   const Orders = mongoose.model(collection, orderSchema);
   const order = new Orders(data);
-  order.save().then(() => {
-    event.reply('order-saved');
-  });
-});
-/*function connectToDatabase() {
-  main()
+  order
+    .save()
     .then(() => {
-      const Cat = mongoose.model('Cat', { name: String });
-
-      const kitty = new Cat({ name: 'Madman' });
-      kitty.save().then(() => console.log('meow'));
+      event.reply('order-saved');
     })
-    .catch((err) => console.log(err));
-}
+    .catch((err) => {
+      event.reply('save-error', err);
+    });
+});
 
+ipcMain.on('is-order-available', (event, { collection, orderId }) => {
+  const Orders = mongoose.model(collection, orderSchema);
 
-*/
+  Orders.exists({ id: orderId }).then((result) => (event.returnValue = result));
+});

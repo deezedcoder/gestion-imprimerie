@@ -4,10 +4,17 @@ export default class IpcDBService {
   }
 
   connect() {
-    window.api.electronIpcSend('connect-to-database', this.dbName);
+    return window.api.electronIpcSendSync('connect-to-database', this.dbName);
   }
 
-  save({ collection, data }) {
-    window.api.electronIpcSend('save-order', { collection, data });
+  save({ collection, order }) {
+    window.api.electronIpcSend('save-order', { collection, order });
+  }
+
+  exists({ collection, orderId }) {
+    return window.api.electronIpcSendSync('is-order-available', {
+      collection,
+      orderId,
+    });
   }
 }
