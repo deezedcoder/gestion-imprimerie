@@ -1,7 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
-require('./database');
+require('dotenv').config();
+const { connect } = require('./database');
 
 let mainWindow;
 
@@ -23,17 +24,21 @@ function createWindow() {
   // In production, set the initial browser path to the local bundle generated
   // by the Create React App build process.
   // In development, set it to localhost to allow live/hot-reloading.
+  console.log(path.join(__dirname), '');
   mainWindow.loadURL(
     isDev
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '../build/index.html')}`
+      ? process.env.WINDOW_LOAD_URL_DEV
+      : `file://${path.join(__dirname, process.env.WINDOW_LOAD_URl_PROD)}`
   );
 
   mainWindow.on('closed', () => (mainWindow = null));
   if (isDev) mainWindow.webContents.openDevTools();
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow();
+  connect('mongodb://localhost:27017/', 'gesimp');
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

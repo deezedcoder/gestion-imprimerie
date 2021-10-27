@@ -2,7 +2,11 @@ const { ipcMain } = require('electron');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const orderSchema = new Schema({
+module.exports.connect = (dbHost, dbName) => {
+  mongoose.connect(dbHost + dbName);
+};
+
+/*const orderSchema = new Schema({
   id: String,
   date: String,
   customer: {
@@ -22,14 +26,21 @@ const orderSchema = new Schema({
   status: String,
 });
 
-ipcMain.on('connect-to-database', (event, databaseName) => {
+ipcMain.handle('connectTo', async (event, databaseName) => {
+  const result = await mongoose.connect(
+    `mongodb://localhost:27017/${databaseName}`
+  );
+  return result.connections;
+});
+
+/*ipcMain.on('connect-to-database', (event, databaseName) => {
   mongoose
     .connect(`mongodb://localhost:27017/${databaseName}`)
     .then(() => {
-      event.returnValue = true;
+      event.reply('connect-to-database', true);
     })
     .catch((err) => {
-      event.returnValue = err;
+      event.reply('connect-to-database', false, err);
     });
 });
 
@@ -44,10 +55,12 @@ ipcMain.on('save-order', (event, { collection, data }) => {
     .catch((err) => {
       event.reply('save-error', err);
     });
-});
+  });
 
-ipcMain.on('is-order-available', (event, { collection, orderId }) => {
+  ipcMain.on('is-order-available', (event, { collection, orderId }) => {
   const Orders = mongoose.model(collection, orderSchema);
 
   Orders.exists({ id: orderId }).then((result) => (event.returnValue = result));
 });
+
+*/
