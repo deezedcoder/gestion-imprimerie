@@ -1,8 +1,8 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, webContents } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 require('dotenv').config();
-const { connect } = require('./database');
+const mongoose = require('mongoose');
 
 let mainWindow;
 
@@ -19,12 +19,11 @@ function createWindow() {
   });
 
   // Display menu bar only in development mode
-  mainWindow.setMenuBarVisibility(isDev);
+  // mainWindow.setMenuBarVisibility(isDev);
 
   // In production, set the initial browser path to the local bundle generated
   // by the Create React App build process.
   // In development, set it to localhost to allow live/hot-reloading.
-  console.log(path.join(__dirname), '');
   mainWindow.loadURL(
     isDev
       ? process.env.WINDOW_LOAD_URL_DEV
@@ -32,12 +31,30 @@ function createWindow() {
   );
 
   mainWindow.on('closed', () => (mainWindow = null));
-  if (isDev) mainWindow.webContents.openDevTools();
+  //if (isDev) mainWindow.webContents.openDevTools();
 }
 
 app.on('ready', () => {
   createWindow();
-  connect('mongodb://localhost:27017/', 'gesimp');
+  mongoose.connection.on('error', (err) => {
+    console.log('connection error', err);
+  });
+
+  mongoose.connection.on('connecting', () => {
+    console.log('connecting');
+  });
+
+  mongoose.connection.on('connected', (event) => {});
+
+  mongoose.connection.on('disconnected', () => {
+    console.log('disconnected');
+  });
+
+  mongoose.connection.on('reconnectFailed', () => {
+    console.log('reconnectFailed');
+  });
+
+  mongoose.connect(process.env.DB_HOST + process.env.DB_NAME);
 });
 
 app.on('window-all-closed', () => {
