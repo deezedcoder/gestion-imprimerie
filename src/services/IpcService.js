@@ -8,13 +8,9 @@ export default class IpcService {
     window.api.electronIpcSend(this.channel, this.request);
 
     return new Promise((resolve) => {
-      window.api.electronIpcOnce(
-        this.request.responseChannel,
-        (event, response) => {
-          console.log('sending...');
-          resolve(response);
-        }
-      );
+      window.api.electronIpcOnce(this.request.responseChannel, (response) => {
+        resolve(response);
+      });
     });
   }
 }

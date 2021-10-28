@@ -13,9 +13,8 @@ export default class ImportButton extends React.Component {
     const systemInfoService = new IpcService('system-info', {
       responseChannel: 'system-info-response',
     });
-    const ipcResponse = await systemInfoService.send();
-    console.log(ipcResponse);
-    this.setState({ systemInfo: ipcResponse });
+    const ipcMainResponse = await systemInfoService.send();
+    this.setState({ systemInfo: ipcMainResponse.kernel });
   }
 
   render() {
