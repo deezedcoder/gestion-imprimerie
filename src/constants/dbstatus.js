@@ -1,3 +1,4 @@
+// * Connection status mapped to db icon intent
 exports.DBSTATUS = {
   CONNECTING: 'warning',
   CONNECTED: 'success',
