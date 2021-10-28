@@ -1,7 +1,10 @@
 export default class IpcService {
-  constructor(channel, request) {
+  constructor(channel, params) {
     this.channel = channel;
-    this.request = request;
+    this.request = {
+      responseChannel: this.channel + '-response',
+      params,
+    };
   }
 
   send() {

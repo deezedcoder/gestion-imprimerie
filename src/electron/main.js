@@ -1,3 +1,4 @@
+const { DBSTATUS } = require('../constants/dbstatus');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
@@ -32,7 +33,7 @@ function createWindow() {
   );
 
   mainWindow.on('closed', () => (mainWindow = null));
-  // if (isDev) mainWindow.webContents.openDevTools();
+  if (isDev) mainWindow.webContents.openDevTools();
 }
 
 app.on('ready', () => {
@@ -45,23 +46,23 @@ app.on('ready', () => {
 
   mainWindow.webContents.on('dom-ready', () => {
     mongoose.connection.on('error', (err) => {
-      mainWindow.webContents.send('connection-status', 'error');
+      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
     });
 
     mongoose.connection.on('connecting', () => {
-      mainWindow.webContents.send('connection-status', 'connecting');
+      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTING);
     });
 
     mongoose.connection.on('connected', () => {
-      mainWindow.webContents.send('connection-status', 'connected');
+      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTED);
     });
 
     mongoose.connection.on('disconnected', () => {
-      mainWindow.webContents.send('connection-status', 'disconnected');
+      mainWindow.webContents.send('connection-status', DBSTATUS.DISCONNECTED);
     });
 
     mongoose.connection.on('reconnectFailed', () => {
-      mainWindow.webContents.send('connection-status', 'reconnectFailed');
+      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
     });
 
     mongoose.connect(process.env.DB_HOST + process.env.DB_NAME);

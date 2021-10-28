@@ -6,12 +6,7 @@ class SystemInfoChannel {
   }
 
   handle(event, request) {
-    /*if (!request.responseChannel) {
-      request.responseChannel = `${this.getName()}-response`;
-    }*/
-    event.sender.send(request.responseChannel, {
-      kernel: execSync('uname -a').toString(),
-    });
+    event.sender.send(request.responseChannel, execSync('uname -a').toString());
   }
 }
 
