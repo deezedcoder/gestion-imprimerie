@@ -1,8 +1,9 @@
-const { app, BrowserWindow, ipcMain, webContents } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const SystemInfoChannel = require('./ipc/SystemInfoChannel');
 
 let mainWindow;
 
@@ -19,7 +20,7 @@ function createWindow() {
   });
 
   // Display menu bar only in development mode
-  // mainWindow.setMenuBarVisibility(isDev);
+  mainWindow.setMenuBarVisibility(isDev);
 
   // In production, set the initial browser path to the local bundle generated
   // by the Create React App build process.
@@ -31,30 +32,40 @@ function createWindow() {
   );
 
   mainWindow.on('closed', () => (mainWindow = null));
-  //if (isDev) mainWindow.webContents.openDevTools();
+  // if (isDev) mainWindow.webContents.openDevTools();
 }
 
 app.on('ready', () => {
   createWindow();
-  mongoose.connection.on('error', (err) => {
-    console.log('connection error', err);
+
+  const systemInfo = new SystemInfoChannel();
+  ipcMain.on(systemInfo.getName(), (event, request) =>
+    systemInfo.handle(event, request)
+  );
+
+  mainWindow.webContents.on('dom-ready', () => {
+    mongoose.connection.on('error', (err) => {
+      mainWindow.webContents.send('connection-status', 'error');
+    });
+
+    mongoose.connection.on('connecting', () => {
+      mainWindow.webContents.send('connection-status', 'connecting');
+    });
+
+    mongoose.connection.on('connected', () => {
+      mainWindow.webContents.send('connection-status', 'connected');
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      mainWindow.webContents.send('connection-status', 'disconnected');
+    });
+
+    mongoose.connection.on('reconnectFailed', () => {
+      mainWindow.webContents.send('connection-status', 'reconnectFailed');
+    });
+
+    mongoose.connect(process.env.DB_HOST + process.env.DB_NAME);
   });
-
-  mongoose.connection.on('connecting', () => {
-    console.log('connecting');
-  });
-
-  mongoose.connection.on('connected', (event) => {});
-
-  mongoose.connection.on('disconnected', () => {
-    console.log('disconnected');
-  });
-
-  mongoose.connection.on('reconnectFailed', () => {
-    console.log('reconnectFailed');
-  });
-
-  mongoose.connect(process.env.DB_HOST + process.env.DB_NAME);
 });
 
 app.on('window-all-closed', () => {

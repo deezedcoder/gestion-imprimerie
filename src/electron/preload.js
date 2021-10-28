@@ -4,7 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 process.once('loaded', () => {
   // Expose database API to the main window.
-  // They'll be accessible at "window.electron".
+  // They'll be accessible at "window.api".
   contextBridge.exposeInMainWorld('api', {
     electronIpcInvoke: (channel, data) => {
       ipcRenderer.invoke(channel, data);
@@ -21,6 +21,11 @@ process.once('loaded', () => {
     electronIpcOn: (channel, func) => {
       // Deliberately strip event as it includes `sender`
       ipcRenderer.on(channel, (event, ...args) => func(...args));
+    },
+
+    electronIpcOnce: (channel, func) => {
+      // Deliberately strip event as it includes `sender`
+      ipcRenderer.once(channel, (event, ...args) => func(...args));
     },
   });
 });
