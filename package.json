@@ -24,7 +24,7 @@
   "private": true,
   "description": "Application de gestion de l'Imprimerie TOLBA",
   "homepage": "./",
-  "main": "./src/electron/main.js",
+  "main": "./electron/main.js",
   "author": "Madjid TOLBA",
   "license": "MIT",
   "dependencies": {

@@ -1,8 +1,9 @@
 const { execSync } = require('child_process');
+const { CHANNELS } = require('../../src/shared/constants/channels');
 
 class SystemInfoChannel {
   getName() {
-    return 'system-info';
+    return CHANNELS.SYSTEM_INFO;
   }
 
   handle(event, request) {

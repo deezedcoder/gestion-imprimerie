@@ -1,10 +1,13 @@
-const { DBSTATUS } = require('../constants/dbstatus');
+require('dotenv').config();
+
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
-require('dotenv').config();
+
+const { DBSTATUS } = require('../src/shared/constants/dbstatus');
 const mongoose = require('mongoose');
-const SystemInfoChannel = require('./ipc/SystemInfoChannel');
+const SystemInfoChannel = require('./channels/SystemInfoChannel');
+const DbConnectChannel = require('./channels/DbConnectChannel');
 
 let mainWindow;
 
@@ -20,9 +23,6 @@ function createWindow() {
     },
   });
 
-  // Display menu bar only in development mode
-  mainWindow.setMenuBarVisibility(isDev);
-
   // In production, set the initial browser path to the local bundle generated
   // by the Create React App build process.
   // In development, set it to localhost to allow live/hot-reloading.
@@ -33,27 +33,44 @@ function createWindow() {
   );
 
   mainWindow.on('closed', () => (mainWindow = null));
-  if (isDev) mainWindow.webContents.openDevTools();
+
+  // hide menu bar
+  mainWindow.setMenuBarVisibility(false);
+
+  // * Development options
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+    mainWindow.autoHideMenuBar = true;
+    // prints the operations mongoose sends to MongoDB to the console
+    mongoose.set('debug', true);
+  }
+}
+
+function addIpcListeners(channels) {
+  channels.forEach((channel) =>
+    ipcMain.on(channel.getName(), (event, request) =>
+      channel.handle(event, request)
+    )
+  );
 }
 
 app.on('ready', () => {
   createWindow();
+  addIpcListeners([new SystemInfoChannel(), new DbConnectChannel(mongoose)]);
 
-  const systemInfo = new SystemInfoChannel();
-  ipcMain.on(systemInfo.getName(), (event, request) =>
-    systemInfo.handle(event, request)
-  );
-
+  // TODO Refactor code
   mainWindow.webContents.on('dom-ready', () => {
     mongoose.connection.on('error', (err) => {
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
     });
 
     mongoose.connection.on('connecting', () => {
+      console.log('main: connecting');
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTING);
     });
 
     mongoose.connection.on('connected', () => {
+      console.log('main: connected');
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTED);
     });
 
@@ -64,8 +81,6 @@ app.on('ready', () => {
     mongoose.connection.on('reconnectFailed', () => {
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
     });
-
-    mongoose.connect(process.env.DB_HOST + process.env.DB_NAME);
   });
 });
 
@@ -73,6 +88,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('will-quit', () => {
+  mongoose.connection.close();
 });
 
 app.on('activate', () => {

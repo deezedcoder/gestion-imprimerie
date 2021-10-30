@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Button } from '@blueprintjs/core';
+import { Button, Intent } from '@blueprintjs/core';
 import IpcService from '../../services/IpcService';
+import { CHANNELS } from '../../shared/constants/channels';
 
 export default function ImportButton() {
   const [systemInfo, setSystemInfo] = useState(null);
 
   const handleClick = () => {
-    const systemInfoService = new IpcService('system-info');
+    const systemInfoService = new IpcService(CHANNELS.SYSTEM_INFO);
     systemInfoService.send().then((ipcMainResponse) => {
       setSystemInfo(ipcMainResponse);
     });
@@ -14,7 +15,7 @@ export default function ImportButton() {
 
   return (
     <div>
-      <Button intent="primary" onClick={handleClick}>
+      <Button intent={Intent.PRIMARY} onClick={handleClick}>
         System info
       </Button>
       <p>{systemInfo}</p>

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Icon } from '@blueprintjs/core';
-import { DBSTATUS } from '../../constants/dbstatus';
+import { DBSTATUS } from '../../shared/constants/dbstatus';
 
 const DBStatusIcon = (props) => {
-  const [dbStatus, setDbStatus] = useState(DBSTATUS.DISCONNECTED);
+  const [dbStatus, setDbStatus] = useState(DBSTATUS.CONNECTED);
 
-  window.api.electronIpcOnce('connection-status', (status) => {
+  window.api.ipcRendererOn('connection-status', (status) => {
     setDbStatus(status);
   });
 
