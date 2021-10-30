@@ -11,7 +11,8 @@ class DbConnectChannel {
 
   handle(event, request) {
     this.dbDriver
-      .connect(process.env.DB_HOST + process.env.DB_NAME, {
+      .connect(process.env.DB_HOST, {
+        dbName: process.env.DB_NAME,
         serverSelectionTimeoutMS: 5000,
       })
       .then(() => {
