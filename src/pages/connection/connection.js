@@ -11,7 +11,6 @@ export default function Connection() {
 
   useEffect(() => {
     if (!connectionError && !connected) {
-      console.log('Hook');
       const dbConnectService = new IpcService(CHANNELS.DB_CONNECT);
       dbConnectService
         .send()

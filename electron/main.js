@@ -11,66 +11,68 @@ const DbConnectChannel = require('./channels/DbConnectChannel');
 
 let mainWindow;
 
-// Create the native browser window.
 function createWindow() {
+  // Create the native browser window.
   mainWindow = new BrowserWindow({
     width: 1020,
     height: 720,
     webPreferences: {
-      // Set the path of an additional "preload" script that can be used to
-      // communicate between node-land and browser-land.
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  // In production, set the initial browser path to the local bundle generated
-  // by the Create React App build process.
-  // In development, set it to localhost to allow live/hot-reloading.
-  mainWindow.loadURL(
-    isDev
-      ? process.env.WINDOW_LOAD_URL_DEV
-      : `file://${path.join(__dirname, process.env.WINDOW_LOAD_URl_PROD)}`
-  );
-
-  mainWindow.on('closed', () => (mainWindow = null));
-
   // hide menu bar
   mainWindow.setMenuBarVisibility(false);
 
-  // * Development options
   if (isDev) {
+    // * In Development MODE
+    mainWindow.loadURL(process.env.DEV_WINDOW_LOAD_URL);
     mainWindow.webContents.openDevTools();
     mainWindow.autoHideMenuBar = true;
-    // prints the operations mongoose sends to MongoDB to the console
+    // print the operations mongoose sends to MongoDB to the console
     mongoose.set('debug', true);
+  } else {
+    // * In Production Mode
+    mainWindow.loadFile(
+      path.join(__dirname, process.env.PROD_WINDOW_LOAD_FILE)
+    );
   }
 }
 
-function addIpcListeners(channels) {
-  channels.forEach((channel) =>
-    ipcMain.on(channel.getName(), (event, request) =>
-      channel.handle(event, request)
-    )
-  );
-}
-
-app.on('ready', () => {
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(() => {
   createWindow();
+
+  app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  // TODO encapsulate code below
+
+  function addIpcListeners(channels) {
+    channels.forEach((channel) =>
+      ipcMain.on(channel.getName(), (event, request) =>
+        channel.handle(event, request)
+      )
+    );
+  }
+
   addIpcListeners([new SystemInfoChannel(), new DbConnectChannel(mongoose)]);
 
-  // TODO Refactor code
   mainWindow.webContents.on('dom-ready', () => {
     mongoose.connection.on('error', (err) => {
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
     });
 
     mongoose.connection.on('connecting', () => {
-      console.log('main: connecting');
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTING);
     });
 
     mongoose.connection.on('connected', () => {
-      console.log('main: connected');
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTED);
     });
 
@@ -82,8 +84,12 @@ app.on('ready', () => {
       mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
     });
   });
+  // TODO ---------------------------
 });
 
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -92,10 +98,4 @@ app.on('window-all-closed', () => {
 
 app.on('will-quit', () => {
   mongoose.connection.close();
-});
-
-app.on('activate', () => {
-  if (mainWindow === null) {
-    createWindow();
-  }
 });

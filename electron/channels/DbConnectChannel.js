@@ -13,7 +13,7 @@ class DbConnectChannel {
     this.dbDriver
       .connect(process.env.DB_HOST, {
         dbName: process.env.DB_NAME,
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 5000, // Delete for production
       })
       .then(() => {
         event.sender.send(request.responseChannel, {
