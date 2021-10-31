@@ -1,4 +1,3 @@
-// TODO Extract this logic into a pages using Router
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Connection from './pages/connection/connection';
 import Home from './pages/home/home';
