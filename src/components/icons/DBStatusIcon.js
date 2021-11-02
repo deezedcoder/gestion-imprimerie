@@ -1,13 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { CHANNELS } from '../../shared/constants/channels';
 import { Icon } from '@blueprintjs/core';
-import { DBSTATUS } from '../../shared/constants/dbstatus';
 
 const DBStatusIcon = (props) => {
-  const [dbStatus, setDbStatus] = useState(DBSTATUS.CONNECTED);
+  const [dbStatus, setDbStatus] = useState(props.initStatus);
 
-  window.api.ipcRendererOn('connection-status', (status) => {
-    setDbStatus(status);
-  });
+  useEffect(() => {
+    window.api.ipcRendererOn(CHANNELS.DB_CONNECT_STATUS, setDbStatus);
+
+    return () => {
+      window.api.ipcRendererRemoveListener(
+        CHANNELS.DB_CONNECT_STATUS,
+        setDbStatus
+      );
+    };
+  }, []);
 
   return <Icon icon="data-connection" size={32} intent={dbStatus} />;
 };

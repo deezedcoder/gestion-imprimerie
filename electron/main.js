@@ -4,10 +4,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-const { DBSTATUS } = require('../src/shared/constants/dbstatus');
 const mongoose = require('mongoose');
-const SystemInfoChannel = require('./channels/SystemInfoChannel');
-const DbConnectChannel = require('./channels/DbConnectChannel');
+const AppInitChannel = require('./channels/AppInitChannel');
 
 let mainWindow;
 
@@ -51,40 +49,11 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  // TODO encapsulate code below
-
-  function addIpcListeners(channels) {
-    channels.forEach((channel) =>
-      ipcMain.on(channel.getName(), (event, request) =>
-        channel.handle(event, request)
-      )
-    );
-  }
-
-  addIpcListeners([new SystemInfoChannel(), new DbConnectChannel(mongoose)]);
-
-  mainWindow.webContents.on('dom-ready', () => {
-    mongoose.connection.on('error', (err) => {
-      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
-    });
-
-    mongoose.connection.on('connecting', () => {
-      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTING);
-    });
-
-    mongoose.connection.on('connected', () => {
-      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECTED);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      mainWindow.webContents.send('connection-status', DBSTATUS.DISCONNECTED);
-    });
-
-    mongoose.connection.on('reconnectFailed', () => {
-      mainWindow.webContents.send('connection-status', DBSTATUS.CONNECT_ERR);
-    });
-  });
-  // TODO ---------------------------
+  [new AppInitChannel(mongoose, mainWindow)].forEach((channel) =>
+    ipcMain.on(channel.getName(), (event, request) =>
+      channel.handle(event, request)
+    )
+  );
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

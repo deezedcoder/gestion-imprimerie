@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Connection from './pages/connection/connection';
+import AppInit from './pages/appinit/AppInit';
+import Home from './pages/home/Home';
 import ROUTES from './constants/routes';
-import Home from './pages/home/home';
 import './App.css';
 
 export default function App() {
@@ -12,8 +12,8 @@ export default function App() {
           <Route path={ROUTES.HOME}>
             <Home />
           </Route>
-          <Route path={ROUTES.CONNECTION}>
-            <Connection />
+          <Route path={ROUTES.APPINIT}>
+            <AppInit />
           </Route>
         </Switch>
       </Router>

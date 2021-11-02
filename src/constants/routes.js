@@ -1,5 +1,5 @@
 const ROUTES = {
-  CONNECTION: '/',
+  APPINIT: '/',
   HOME: '/home',
 };
 

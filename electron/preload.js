@@ -14,12 +14,17 @@ process.once('loaded', () => {
       ipcRenderer.send(channel, request);
     },
 
-    ipcRendererOnce: (channel, func) => {
-      ipcRenderer.once(channel, (event, ...args) => func(...args));
+    ipcRendererOnce: (channel, callBack) => {
+      ipcRenderer.once(channel, (event, ...args) => callBack(...args));
     },
 
-    ipcRendererOn: (channel, func) => {
-      ipcRenderer.on(channel, (event, ...args) => func(...args));
+    ipcRendererOn: (channel, callBack) => {
+      ipcRenderer.on(channel, (event, ...args) => callBack(...args));
+    },
+    ipcRendererRemoveListener: (channel, callBack) => {
+      ipcRenderer.removeListener(channel, (event, ...args) =>
+        callBack(...args)
+      );
     },
   });
 });

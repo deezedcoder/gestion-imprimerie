@@ -1,6 +1,7 @@
 // * channels names.
 exports.CHANNELS = {
-  SYSTEM_INFO: 'system-info',
+  APP_INIT: 'app-init',
+  CONNECTION_STATUS: 'connection-status',
   DB_CONNECT: 'db-connect',
-  DB_CLOSE: 'db-close',
+  DB_CONNECT_STATUS: 'db-connect-status',
 };
