@@ -60,7 +60,7 @@ class AppInitChannel {
 
         // ? Success
         const appState = {
-          dbStatus: states[this.dbDriver.connection.readyState],
+          dbInitialStatus: states[this.dbDriver.connection.readyState],
         };
 
         event.sender.send(request.responseChannel, { appState });

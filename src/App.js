@@ -1,10 +1,36 @@
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import appState from './recoil/atoms/appState';
+import { useState, useEffect } from 'react';
 import AppInit from './pages/appinit/AppInit';
 import Home from './pages/home/Home';
 import ROUTES from './constants/routes';
+import { CHANNELS } from './shared/constants/channels';
 import './App.css';
 
 export default function App() {
+  const [param, setParam] = useState();
+  const setAppParams = useSetRecoilState(appState);
+
+  useEffect(() => {
+    console.log('useEffect-1');
+    window.api.ipcRendererOn(CHANNELS.DB_CONNECT_STATUS, setParam);
+
+    return () => {
+      window.api.ipcRendererRemoveListener(
+        CHANNELS.DB_CONNECT_STATUS,
+        setParam
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('useEffect-2', param);
+    setAppParams((prevParams) => {
+      return { ...prevParams, dbStatus: param };
+    });
+  });
+
   return (
     <div className="App">
       <Router>

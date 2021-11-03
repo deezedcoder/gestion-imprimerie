@@ -15,7 +15,6 @@ export default function AppLoader(props) {
       appInitService
         .send()
         .then((ipcMainResponse) => {
-          // update application state
           props.onAppReady(ipcMainResponse.appState);
         })
         .catch((err) => {

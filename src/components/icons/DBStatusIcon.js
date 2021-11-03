@@ -1,22 +1,17 @@
-import { useEffect, useState } from 'react';
-import { CHANNELS } from '../../shared/constants/channels';
+import { useRecoilValue } from 'recoil';
+import appState from '../../recoil/atoms/appState';
 import { Icon } from '@blueprintjs/core';
 
-const DBStatusIcon = (props) => {
-  const [dbStatus, setDbStatus] = useState(props.initStatus);
-
-  useEffect(() => {
-    window.api.ipcRendererOn(CHANNELS.DB_CONNECT_STATUS, setDbStatus);
-
-    return () => {
-      window.api.ipcRendererRemoveListener(
-        CHANNELS.DB_CONNECT_STATUS,
-        setDbStatus
-      );
-    };
-  }, []);
-
-  return <Icon icon="data-connection" size={32} intent={dbStatus} />;
+const DBStatusIcon = () => {
+  const { dbStatus, dbInitialStatus } = useRecoilValue(appState);
+  console.log(dbStatus, dbInitialStatus, dbStatus || dbInitialStatus);
+  return (
+    <Icon
+      icon="data-connection"
+      size={32}
+      intent={dbStatus || dbInitialStatus}
+    />
+  );
 };
 
 export default DBStatusIcon;
