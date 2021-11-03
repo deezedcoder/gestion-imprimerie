@@ -13,7 +13,6 @@ export default function App() {
   const setAppParams = useSetRecoilState(appState);
 
   useEffect(() => {
-    console.log('useEffect-1');
     window.api.ipcRendererOn(CHANNELS.DB_CONNECT_STATUS, setParam);
 
     return () => {
@@ -25,7 +24,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    console.log('useEffect-2', param);
     setAppParams((prevParams) => {
       return { ...prevParams, dbStatus: param };
     });

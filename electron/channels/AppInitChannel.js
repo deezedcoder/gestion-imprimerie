@@ -1,14 +1,28 @@
-// TODO implement this channel
 const { CHANNELS } = require('../../src/shared/constants/channels');
-const { DBSTATUS } = require('../../src/shared/constants/dbstatus');
 
-const states = {
+// * Connection status mapped to db icon intent
+const DBSTATUS = {
+  CONNECTING: 'warning',
+  CONNECTED: 'success',
+  DISCONNECTED: 'primary',
+  CONNECT_ERR: 'danger',
+};
+
+const readyStates = {
   0: DBSTATUS.DISCONNECTED,
   1: DBSTATUS.CONNECTED,
   2: DBSTATUS.CONNECTING,
   3: DBSTATUS.DISCONNECTED, // disconnecting: send same status as disconnected
   4: DBSTATUS.CONNECT_ERR, // invalid credentials: send as error
 };
+
+const events = [
+  { name: 'error', response: DBSTATUS.CONNECT_ERR },
+  { name: 'connecting', response: DBSTATUS.CONNECTING },
+  { name: 'connected', response: DBSTATUS.CONNECTED },
+  { name: 'disconnected', response: DBSTATUS.DISCONNECTED },
+  { name: 'reconnectFailed', response: DBSTATUS.CONNECT_ERR },
+];
 
 class AppInitChannel {
   constructor(dbDriver, mainWindow) {
@@ -29,38 +43,17 @@ class AppInitChannel {
       serverSelectionTimeoutMS: 5000, // Delete for production
     })
       .then(() => {
-        db.connection.on('error', (err) => {
-          win.webContents.send(
-            CHANNELS.DB_CONNECT_STATUS,
-            DBSTATUS.CONNECT_ERR
-          );
-        });
-
-        db.connection.on('connecting', () => {
-          win.webContents.send(CHANNELS.DB_CONNECT_STATUS, DBSTATUS.CONNECTING);
-        });
-
-        db.connection.on('connected', () => {
-          win.webContents.send(CHANNELS.DB_CONNECT_STATUS, DBSTATUS.CONNECTED);
-        });
-
-        db.connection.on('disconnected', () => {
-          win.webContents.send(
-            CHANNELS.DB_CONNECT_STATUS,
-            DBSTATUS.DISCONNECTED
-          );
-        });
-
-        db.connection.on('reconnectFailed', () => {
-          win.webContents.send(
-            CHANNELS.DB_CONNECT_STATUS,
-            DBSTATUS.CONNECT_ERR
-          );
+        // TODO handle connection error after initial connection
+        // Add connection status event listeners
+        events.forEach((event) => {
+          db.connection.on(event.name, (err) => {
+            win.webContents.send(CHANNELS.DB_CONNECT_STATUS, event.response);
+          });
         });
 
         // ? Success
         const appState = {
-          dbInitialStatus: states[this.dbDriver.connection.readyState],
+          dbInitialStatus: readyStates[this.dbDriver.connection.readyState],
         };
 
         event.sender.send(request.responseChannel, { appState });

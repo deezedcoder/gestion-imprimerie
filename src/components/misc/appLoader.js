@@ -9,9 +9,7 @@ export default function AppLoader(props) {
   const [error, setError] = useState({ flag: false });
 
   useEffect(() => {
-    console.log('hook');
     if (!error.flag) {
-      console.log('init...');
       appInitService
         .send()
         .then((ipcMainResponse) => {

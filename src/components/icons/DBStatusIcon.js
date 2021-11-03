@@ -4,7 +4,7 @@ import { Icon } from '@blueprintjs/core';
 
 const DBStatusIcon = () => {
   const { dbStatus, dbInitialStatus } = useRecoilValue(appState);
-  console.log(dbStatus, dbInitialStatus, dbStatus || dbInitialStatus);
+
   return (
     <Icon
       icon="data-connection"
