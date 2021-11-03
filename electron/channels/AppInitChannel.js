@@ -68,6 +68,7 @@ class AppInitChannel {
       .catch((err) => {
         event.sender.send(request.responseChannel, {
           error: {
+            flag: true,
             icon: 'data-connection',
             title: 'Impossible de se connecter à la base de données',
             description: err.toString(),

@@ -4,10 +4,18 @@ import AppLoader from '../../components/misc/appLoader';
 
 export default function AppInit() {
   const [appReady, setAppReady] = useState(false);
+  const appIsReady = (appState) => {
+    console.log(appState);
+    setAppReady(true);
+  };
 
   return (
     <Fragment>
-      {appReady ? <Redirect to={{ pathname: '/home' }} /> : <AppLoader />}
+      {appReady ? (
+        <Redirect to={{ pathname: '/home' }} />
+      ) : (
+        <AppLoader onAppReady={appIsReady} />
+      )}
     </Fragment>
   );
 }
