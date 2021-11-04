@@ -1,4 +1,5 @@
 const { CHANNELS } = require('../../src/shared/constants/channels');
+const { orderSchema } = require('../database/schemas');
 
 // * Connection status mapped to db icon intent
 const DBSTATUS = {
@@ -28,6 +29,7 @@ class AppInitChannel {
   constructor(dbDriver, mainWindow) {
     this.dbDriver = dbDriver;
     this.mainWindow = mainWindow;
+    this.appState = {};
   }
 
   getName() {
@@ -39,6 +41,7 @@ class AppInitChannel {
     const win = this.mainWindow;
 
     db.connect(process.env.DB_HOST, {
+      // * Connect to database
       dbName: process.env.DB_NAME,
       serverSelectionTimeoutMS: 5000, // Delete for production
     })
@@ -51,23 +54,27 @@ class AppInitChannel {
           });
         });
 
-        // ? Success
         const appState = {
           dbInitialStatus: readyStates[this.dbDriver.connection.readyState],
         };
 
         return appState;
       })
-      .then((appState) => {
+      .then(async (appState) => {
         // * Get data from database
-        const orders = {};
+        const Order = db.model('Commandes', orderSchema);
+        const orders = await Order.find({});
+        console.log(orders);
         const initState = { appState, orders };
         return initState;
       })
       .then((initState) => {
-        event.sender.send(request.responseChannel, { initState });
+        // * send initial state and data
+        event.sender.send(request.responseChannel, initState);
       })
       .catch((err) => {
+        // TODO : Handle connection errors
+        // TODO : Handle database read errors
         event.sender.send(request.responseChannel, {
           error: {
             flag: true,

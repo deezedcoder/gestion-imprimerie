@@ -13,7 +13,7 @@ export default function AppLoader(props) {
       appInitService
         .send()
         .then((ipcMainResponse) => {
-          props.onAppReady(ipcMainResponse.initState);
+          props.onAppReady(ipcMainResponse);
         })
         .catch((err) => {
           setError(err);
