@@ -9,23 +9,23 @@ import { CHANNELS } from './shared/constants/channels';
 import './App.css';
 
 export default function App() {
-  const [param, setParam] = useState();
+  const [dbStatus, setDbStatus] = useState();
   const setAppParams = useSetRecoilState(appState);
 
   useEffect(() => {
-    window.api.ipcRendererOn(CHANNELS.DB_CONNECT_STATUS, setParam);
+    window.api.ipcRendererOn(CHANNELS.DB_CONNECT_STATUS, setDbStatus);
 
     return () => {
       window.api.ipcRendererRemoveListener(
         CHANNELS.DB_CONNECT_STATUS,
-        setParam
+        setDbStatus
       );
     };
   }, []);
 
   useEffect(() => {
     setAppParams((prevParams) => {
-      return { ...prevParams, dbStatus: param };
+      return { ...prevParams, dbStatus };
     });
   });
 

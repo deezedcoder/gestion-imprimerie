@@ -44,7 +44,7 @@ class AppInitChannel {
     })
       .then(() => {
         // TODO handle connection error after initial connection
-        // Add connection status event listeners
+        // * Add connection status event listeners
         events.forEach((event) => {
           db.connection.on(event.name, (err) => {
             win.webContents.send(CHANNELS.DB_CONNECT_STATUS, event.response);
@@ -56,7 +56,16 @@ class AppInitChannel {
           dbInitialStatus: readyStates[this.dbDriver.connection.readyState],
         };
 
-        event.sender.send(request.responseChannel, { appState });
+        return appState;
+      })
+      .then((appState) => {
+        // * Get data from database
+        const orders = {};
+        const initState = { appState, orders };
+        return initState;
+      })
+      .then((initState) => {
+        event.sender.send(request.responseChannel, { initState });
       })
       .catch((err) => {
         event.sender.send(request.responseChannel, {
