@@ -1,4 +1,4 @@
-export function parseImportedData(data) {
+export default function parseImportedData(data) {
   const DATE = 0;
   const ID = 2;
   const CUSTOMER_ID = 3;

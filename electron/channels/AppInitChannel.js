@@ -29,7 +29,9 @@ class AppInitChannel {
   constructor(dbDriver, mainWindow) {
     this.dbDriver = dbDriver;
     this.mainWindow = mainWindow;
-    this.appState = {};
+    this.appState = {
+      pdfFilePath: 'commande/bsm.pdf', // TODO will be added as a config option later
+    };
   }
 
   getName() {
@@ -54,23 +56,25 @@ class AppInitChannel {
           });
         });
 
-        const appState = {
+        this.appState = {
+          ...this.appState,
           dbInitialStatus: readyStates[this.dbDriver.connection.readyState],
         };
-
-        return appState;
       })
-      .then(async (appState) => {
+      .then(async () => {
         // * Get data from database
+        // TODO add try catch to handle database read errors
         const Order = db.model('Commandes', orderSchema);
         const orders = await Order.find({});
         console.log(orders);
-        const initState = { appState, orders };
-        return initState;
+        return orders;
       })
-      .then((initState) => {
+      .then((orders) => {
         // * send initial state and data
-        event.sender.send(request.responseChannel, initState);
+        event.sender.send(request.responseChannel, {
+          appState: this.appState,
+          orders,
+        });
       })
       .catch((err) => {
         // TODO : Handle connection errors
