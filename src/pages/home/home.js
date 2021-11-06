@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import IpcService from '../../services/IpcService';
 import appState from '../../recoil/atoms/appState';
 import ordersState from '../../recoil/atoms/ordersState';
@@ -7,11 +7,20 @@ import ImportButton from '../../components/buttons/ImportButton';
 import DBStatusIcon from '../../components/icons/DBStatusIcon';
 import { CHANNELS } from '../../shared/constants/channels';
 import loadPdfData from '../../utils/loadPdfData';
+import OrdersList from '../../components/lists/OrdersList';
+import OrderDetails from '../../components/lists/OrderDetails';
 
 export default function Home() {
   const { pdfFilePath } = useRecoilValue(appState);
+  const [orders, setOrders] = useRecoilState(ordersState);
   const [isLoading, setIsLoading] = useState(false);
-  const setOrders = useSetRecoilState(ordersState);
+  const [currentOrderIndex, setCurrentOrderIndex] = useState(null);
+
+  const handleOrderSelect = (event, orders) => {
+    const index = orders.findIndex((order) => order.id === event.target.id);
+
+    if (index !== -1) setCurrentOrderIndex(index);
+  };
 
   const handleImport = async (pdfFilePath) => {
     setIsLoading(true);
@@ -54,6 +63,12 @@ export default function Home() {
         onImport={() => handleImport(pdfFilePath)}
         isLoading={isLoading}
       />
+      <OrdersList onSelect={(e) => handleOrderSelect(e, orders)} />
+      {currentOrderIndex !== null ? (
+        <OrderDetails items={orders[currentOrderIndex].items} />
+      ) : (
+        ''
+      )}
     </React.Fragment>
   );
 }
