@@ -1,5 +1,6 @@
 const { CHANNELS } = require('../../src/shared/constants/channels');
 const { orderSchema } = require('../database/schemas');
+const parseOrders = require('../helpers/parseOrders');
 
 // * Connection status mapped to db icon intent
 const DBSTATUS = {
@@ -17,7 +18,7 @@ const readyStates = {
   4: DBSTATUS.CONNECT_ERR, // invalid credentials: send as error
 };
 
-const events = [
+const connectionEvents = [
   { name: 'error', response: DBSTATUS.CONNECT_ERR },
   { name: 'connecting', response: DBSTATUS.CONNECTING },
   { name: 'connected', response: DBSTATUS.CONNECTED },
@@ -50,8 +51,8 @@ class AppInitChannel {
       .then(() => {
         // TODO handle connection error after initial connection
         // * Add connection status event listeners
-        events.forEach((event) => {
-          db.connection.on(event.name, (err) => {
+        connectionEvents.forEach((connectionEvent) => {
+          db.connection.on(connectionEvent.name, (err) => {
             win.webContents.send(CHANNELS.DB_CONNECT_STATUS, event.response);
           });
         });
@@ -66,8 +67,7 @@ class AppInitChannel {
         // TODO add try catch to handle database read errors
         const Order = db.model('Commandes', orderSchema);
         const orders = await Order.find({});
-        console.log(orders);
-        return orders;
+        return parseOrders(orders);
       })
       .then((orders) => {
         // * send initial state and data

@@ -6,6 +6,7 @@ const isDev = require('electron-is-dev');
 
 const mongoose = require('mongoose');
 const AppInitChannel = require('./channels/AppInitChannel');
+const DatabaseChannel = require('./channels/DatabaseChannel');
 
 let mainWindow;
 
@@ -49,7 +50,10 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  [new AppInitChannel(mongoose, mainWindow)].forEach((channel) =>
+  [
+    new AppInitChannel(mongoose, mainWindow),
+    new DatabaseChannel(mongoose),
+  ].forEach((channel) =>
     ipcMain.on(channel.getName(), (event, request) =>
       channel.handle(event, request)
     )

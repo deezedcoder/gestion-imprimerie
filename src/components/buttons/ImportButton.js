@@ -6,7 +6,7 @@ export default function ImportButton(props) {
       <Button
         intent={Intent.PRIMARY}
         onClick={props.onImport}
-        disabled={props.isLoading}
+        disabled={props.isLoading || false}
         icon="document"
       >
         Nouvelle Commande

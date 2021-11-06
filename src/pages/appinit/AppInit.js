@@ -11,7 +11,6 @@ export default function AppInit() {
   const setOrders = useSetRecoilState(ordersState);
 
   const appIsReady = (appInitState) => {
-    console.log(appInitState);
     setApp(appInitState.appState);
     setOrders(appInitState.orders);
     setAppReady(true);
