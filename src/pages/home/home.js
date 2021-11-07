@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
+import ImportButton from '../../components/buttons/ImportButton';
+import { useState } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import IpcService from '../../services/IpcService';
 import appState from '../../recoil/atoms/appState';
 import ordersState from '../../recoil/atoms/ordersState';
-import ImportButton from '../../components/buttons/ImportButton';
 import DBStatusIcon from '../../components/icons/DBStatusIcon';
 import { CHANNELS } from '../../shared/constants/channels';
 import loadPdfData from '../../utils/loadPdfData';
+import { Box, CssBaseline, AppBar, Toolbar, Container } from '@mui/material';
 import OrdersList from '../../components/lists/OrdersList';
 import OrderDetails from '../../components/lists/OrderDetails';
 
@@ -57,6 +59,45 @@ export default function Home() {
   };
 
   return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar>
+        <Toolbar
+          sx={{
+            backgroundColor: '#FFF',
+            pr: '24px', // keep right padding when drawer closed
+          }}
+        >
+          <ImportButton
+            onImport={() => handleImport(pdfFilePath)}
+            isLoading={isLoading}
+          />
+          <DBStatusIcon />
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: 'dark',
+          flexGrow: 1,
+          height: '100vh',
+          overflow: 'auto',
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <OrdersList onSelect={(e) => handleOrderSelect(e, orders)} />
+          {currentOrderIndex !== null ? (
+            <OrderDetails items={orders[currentOrderIndex].items} />
+          ) : (
+            ''
+          )}
+        </Container>
+      </Box>
+    </Box>
+  );
+
+  /* return (
     <React.Fragment>
       <DBStatusIcon />
       <ImportButton
@@ -70,5 +111,5 @@ export default function Home() {
         ''
       )}
     </React.Fragment>
-  );
+  ); */
 }

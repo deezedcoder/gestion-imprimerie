@@ -2,12 +2,12 @@ const { CHANNELS } = require('../../src/shared/constants/channels');
 const { orderSchema } = require('../database/schemas');
 const parseOrders = require('../helpers/parseOrders');
 
-// * Connection status mapped to db icon intent
+// * Connection status mapped to db icon color (@mui)
 const DBSTATUS = {
   CONNECTING: 'warning',
   CONNECTED: 'success',
-  DISCONNECTED: 'primary',
-  CONNECT_ERR: 'danger',
+  DISCONNECTED: 'disabled',
+  CONNECT_ERR: 'error',
 };
 
 const readyStates = {
