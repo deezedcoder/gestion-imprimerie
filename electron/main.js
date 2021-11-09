@@ -3,6 +3,10 @@ require('dotenv').config();
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
+const {
+  default: installExtension,
+  REACT_DEVELOPER_TOOLS,
+} = require('electron-devtools-installer');
 
 const mongoose = require('mongoose');
 const AppInitChannel = require('./channels/AppInitChannel');
@@ -42,6 +46,10 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+
   createWindow();
 
   app.on('activate', () => {

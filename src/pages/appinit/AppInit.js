@@ -1,9 +1,10 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { Redirect } from 'react-router';
 import appState from '../../recoil/atoms/appState';
 import ordersState from '../../recoil/atoms/ordersState';
-import AppLoader from '../../components/misc/appLoader';
+import AppLoader from '../../components/misc/AppLoader';
+import { Container } from '@mui/material';
 
 export default function AppInit() {
   const [appReady, setAppReady] = useState(false);
@@ -17,12 +18,12 @@ export default function AppInit() {
   };
 
   return (
-    <Fragment>
+    <Container sx={{ height: '100vh' }}>
       {appReady ? (
         <Redirect to={{ pathname: '/home' }} />
       ) : (
         <AppLoader onAppReady={appIsReady} />
       )}
-    </Fragment>
+    </Container>
   );
 }

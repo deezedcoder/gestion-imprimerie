@@ -6,8 +6,8 @@ const parseOrders = require('../helpers/parseOrders');
 const DBSTATUS = {
   CONNECTING: 'warning',
   CONNECTED: 'success',
-  DISCONNECTED: 'disabled',
-  CONNECT_ERR: 'error',
+  DISCONNECTED: 'primary', //'disabled',
+  CONNECT_ERR: 'danger', // 'error',
 };
 
 const readyStates = {

@@ -6,6 +6,8 @@ import AppInit from './pages/appinit/AppInit';
 import Home from './pages/home/Home';
 import ROUTES from './constants/routes';
 import { CHANNELS } from './shared/constants/channels';
+import { Box, CssBaseline } from '@mui/material';
+
 import './App.css';
 
 export default function App() {
@@ -30,7 +32,8 @@ export default function App() {
   });
 
   return (
-    <div className="App">
+    <Box>
+      <CssBaseline />
       <Router>
         <Switch>
           <Route path={ROUTES.HOME}>
@@ -41,6 +44,6 @@ export default function App() {
           </Route>
         </Switch>
       </Router>
-    </div>
+    </Box>
   );
 }
