@@ -1,29 +1,24 @@
 const { CHANNELS } = require('../../src/shared/constants/channels');
 const { orderSchema } = require('../database/schemas');
 const parseOrders = require('../helpers/parseOrders');
-
-// * Connection status mapped to db icon color (@mui)
-const DBSTATUS = {
-  CONNECTING: 'warning',
-  CONNECTED: 'success',
-  DISCONNECTED: 'primary', //'disabled',
-  CONNECT_ERR: 'danger', // 'error',
-};
+const {
+  DBSTATUS_INTENT,
+} = require('../../src/shared/constants/dbstatusIntents');
 
 const readyStates = {
-  0: DBSTATUS.DISCONNECTED,
-  1: DBSTATUS.CONNECTED,
-  2: DBSTATUS.CONNECTING,
-  3: DBSTATUS.DISCONNECTED, // disconnecting: send same status as disconnected
-  4: DBSTATUS.CONNECT_ERR, // invalid credentials: send as error
+  0: DBSTATUS_INTENT.DISCONNECTED,
+  1: DBSTATUS_INTENT.CONNECTED,
+  2: DBSTATUS_INTENT.CONNECTING,
+  3: DBSTATUS_INTENT.DISCONNECTED, // disconnecting: send same status as disconnected
+  4: DBSTATUS_INTENT.CONNECT_ERR, // invalid credentials: send as error
 };
 
 const connectionEvents = [
-  { name: 'error', response: DBSTATUS.CONNECT_ERR },
-  { name: 'connecting', response: DBSTATUS.CONNECTING },
-  { name: 'connected', response: DBSTATUS.CONNECTED },
-  { name: 'disconnected', response: DBSTATUS.DISCONNECTED },
-  { name: 'reconnectFailed', response: DBSTATUS.CONNECT_ERR },
+  { name: 'error', response: DBSTATUS_INTENT.CONNECT_ERR },
+  { name: 'connecting', response: DBSTATUS_INTENT.CONNECTING },
+  { name: 'connected', response: DBSTATUS_INTENT.CONNECTED },
+  { name: 'disconnected', response: DBSTATUS_INTENT.DISCONNECTED },
+  { name: 'reconnectFailed', response: DBSTATUS_INTENT.CONNECT_ERR },
 ];
 
 class AppInitChannel {
@@ -53,7 +48,10 @@ class AppInitChannel {
         // * Add connection status event listeners
         connectionEvents.forEach((connectionEvent) => {
           db.connection.on(connectionEvent.name, (err) => {
-            win.webContents.send(CHANNELS.DB_CONNECT_STATUS, event.response);
+            win.webContents.send(
+              CHANNELS.DB_CONNECT_STATUS,
+              connectionEvent.response
+            );
           });
         });
 

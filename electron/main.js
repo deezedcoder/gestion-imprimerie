@@ -25,13 +25,13 @@ function createWindow() {
   });
 
   // hide menu bar
-  // mainWindow.setMenuBarVisibility(false);
+  mainWindow.setMenuBarVisibility(false);
 
   if (isDev) {
     // * In Development MODE
     mainWindow.loadURL(process.env.DEV_WINDOW_LOAD_URL);
-    // mainWindow.webContents.openDevTools();
-    // mainWindow.autoHideMenuBar = true;
+    mainWindow.webContents.openDevTools();
+    mainWindow.autoHideMenuBar = true;
     // print the operations mongoose sends to MongoDB to the console
     mongoose.set('debug', true);
   } else {
