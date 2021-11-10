@@ -10,10 +10,12 @@ export default function AppLoader(props) {
   const [error, setError] = useState({ flag: false });
 
   useEffect(() => {
+    console.log('effect 1');
     if (!error.flag) {
       appInitService
         .send()
         .then((ipcMainResponse) => {
+          console.log('effect 1 then');
           props.onAppReady(ipcMainResponse);
         })
         .catch((err) => {
