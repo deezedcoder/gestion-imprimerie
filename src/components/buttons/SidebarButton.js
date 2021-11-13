@@ -19,7 +19,7 @@ export default function SidebarButton() {
   const boxStyles = {
     position: 'fixed',
     marginTop: '32px',
-    zIndex: 10000,
+    zIndex: (theme) => theme.zIndex.drawer,
   };
 
   const fabStyles = {
