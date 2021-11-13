@@ -8,6 +8,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+// Css file for blueprintjs to work properly
 import '@blueprintjs/core/lib/css/blueprint.css';
 
 ReactDOM.render(

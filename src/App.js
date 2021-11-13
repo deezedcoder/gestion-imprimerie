@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import appState from './recoil/atoms/appState';
+import paramsState from './recoil/atoms/paramsState';
 import AppInit from './pages/appinit/AppInit';
 import Home from './pages/home/Home';
 import ROUTES from './constants/routes';
 import { Box, CssBaseline } from '@mui/material';
-import useSubscriber from './components/hooks/useSubscriber';
+import useSubscriber from './hooks/useSubscriber';
 
 export default function App() {
-  const setAppParams = useSetRecoilState(appState);
+  const setParams = useSetRecoilState(paramsState);
   const newParams = useSubscriber();
 
   useEffect(() => {
-    setAppParams((prevParams) => {
+    setParams((prevParams) => {
       return { ...prevParams, ...newParams };
     });
   });

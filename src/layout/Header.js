@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppBar, Toolbar, Stack } from '@mui/material';
 import PdfLoader from '../components/misc/PdfLoader';
 import SearchInput from '../components/inputs/SearchInput';
@@ -8,11 +7,21 @@ import { Divider } from '@blueprintjs/core';
 
 const Header = () => {
   return (
-    <AppBar>
+    <AppBar
+      sx={{
+        position: 'relative',
+        paddingLeft: '24px',
+        backgroundColor: '#FFF',
+        boxShadow: 'none',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+      }}
+    >
       <Toolbar
         sx={{
-          backgroundColor: '#FFF',
-          pr: '24px', // keep right padding when drawer closed
+          paddingLeft: '24px',
+          paddingRight: '24px',
+          minHeight: '64px',
         }}
       >
         <Stack

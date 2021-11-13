@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { Redirect } from 'react-router';
-import appState from '../../recoil/atoms/appState';
+import paramsState from '../../recoil/atoms/paramsState';
+import settingsState from '../../recoil/atoms/settingsState';
 import ordersState from '../../recoil/atoms/ordersState';
 import AppLoader from '../../components/misc/AppLoader';
 import { Container } from '@mui/material';
 
 export default function AppInit() {
   const [appReady, setAppReady] = useState(false);
-  const setApp = useSetRecoilState(appState);
+  const setParams = useSetRecoilState(paramsState);
+  const setSettings = useSetRecoilState(settingsState);
   const setOrders = useSetRecoilState(ordersState);
 
-  const appIsReady = (appInitState) => {
-    setApp(appInitState.appState);
-    setOrders(appInitState.orders);
+  const appIsReady = ({ params, settings, orders }) => {
+    setParams(params);
+    setSettings(settings);
+    setOrders(orders);
     setAppReady(true);
   };
 

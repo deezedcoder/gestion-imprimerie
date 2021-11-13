@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import IpcService from '../../services/IpcService';
 import { CHANNELS } from '../../shared/constants/channels';
 import { Box, CircularProgress, Typography } from '@mui/material';
@@ -10,12 +10,10 @@ export default function AppLoader(props) {
   const [error, setError] = useState({ flag: false });
 
   useEffect(() => {
-    console.log('effect 1');
     if (!error.flag) {
       appInitService
         .send()
         .then((ipcMainResponse) => {
-          console.log('effect 1 then');
           props.onAppReady(ipcMainResponse);
         })
         .catch((err) => {

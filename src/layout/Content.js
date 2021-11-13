@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Box, Toolbar, Container } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import ordersState from '../recoil/atoms/ordersState';
 import OrdersList from '../components/lists/OrdersList';
 import OrderDetails from '../components/lists/OrderDetails';
@@ -20,13 +20,11 @@ const Content = () => {
     <Box
       component="main"
       sx={{
-        backgroundColor: 'dark',
+        // border: '2px solid lime',
         flexGrow: 1,
-        height: '100vh',
         overflow: 'auto',
       }}
     >
-      <Toolbar />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <OrdersList onSelect={(e) => handleOrderSelect(e, orders)} />
         {currentOrderIndex !== null ? (

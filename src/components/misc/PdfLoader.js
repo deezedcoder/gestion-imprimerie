@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import ordersState from '../../recoil/atoms/ordersState';
-import appState from '../../recoil/atoms/appState';
+import settingsState from '../../recoil/atoms/settingsState';
 import IpcService from '../../services/IpcService';
 import loadPdfData from '../../utils/loadPdfData';
 import ImportButton from '../buttons/ImportButton';
@@ -9,7 +9,7 @@ import { CHANNELS } from '../../shared/constants/channels';
 
 const PdfLoader = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { pdfFilePath } = useRecoilValue(appState);
+  const { pdfFilePath } = useRecoilValue(settingsState);
   const setOrders = useSetRecoilState(ordersState);
 
   const handleImport = async (pdfFilePath) => {

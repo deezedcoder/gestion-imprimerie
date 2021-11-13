@@ -25,8 +25,13 @@ class AppInitChannel {
   constructor(dbDriver, mainWindow) {
     this.dbDriver = dbDriver;
     this.mainWindow = mainWindow;
-    this.appState = {
-      pdfFilePath: 'commande/bsm.pdf', // TODO will be added as a config option later
+    // TODO preferences will be loaded later using a config system or db
+    this.params = {
+      isSidebarOpened: true,
+    };
+
+    this.settings = {
+      pdfFilePath: 'commande/bsm.pdf',
     };
   }
 
@@ -55,8 +60,8 @@ class AppInitChannel {
           });
         });
 
-        this.appState = {
-          ...this.appState,
+        this.params = {
+          ...this.params,
           dbInitialStatus: readyStates[this.dbDriver.connection.readyState],
         };
       })
@@ -70,7 +75,8 @@ class AppInitChannel {
       .then((orders) => {
         // * send initial state and data
         event.sender.send(request.responseChannel, {
-          appState: this.appState,
+          params: this.params,
+          settings: this.settings,
           orders,
         });
       })
