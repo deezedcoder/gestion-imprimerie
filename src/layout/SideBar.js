@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import paramsState from '../recoil/atoms/paramsState';
+import componentState from '../recoil/atoms/componentState';
 import MuiDrawer from '@mui/material/Drawer';
 import {
   List,
@@ -9,15 +10,9 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import { styled } from '@mui/material/styles';
 import HeaderLogo from '../components/icons/HeaderLogo';
-
-const data = [
-  { icon: <FormatListBulletedIcon />, label: 'Liste des commandes' },
-  { icon: <PlaylistAddCheckIcon />, label: 'Selection' },
-];
+import mainContents from '../constants/mainContents';
 
 const openedMixin = (theme) => ({
   transition: theme.transitions.create('width', {
@@ -56,11 +51,15 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Sidebar() {
-  const [selected, SetSelected] = useState(0);
+  const [selected, setSelected] = useState(0);
+  const setComponent = useSetRecoilState(componentState);
   const { isSidebarOpened } = useRecoilValue(paramsState);
 
-  const handleListItemClick = (index) => {
-    SetSelected(index);
+  const handleListItemClick = (index, component) => {
+    if (selected !== index) {
+      setSelected(index);
+      setComponent(component);
+    }
   };
 
   return (
@@ -68,20 +67,24 @@ export default function Sidebar() {
       <HeaderLogo fullLength={isSidebarOpened} />
       <Divider />
       <List>
-        {data.map((item, index) => (
+        {mainContents.map((content, index) => (
           <ListItem
             button
-            key={item.label}
-            sx={{ paddingLeft: '28px', alignItems: 'flex-start' }}
-            onClick={() => handleListItemClick(index)}
+            key={content.sidebar.label}
+            sx={{
+              height: '42px',
+              paddingLeft: '28px',
+              alignItems: 'flex-start',
+            }}
+            onClick={() => handleListItemClick(index, content.main.component)}
           >
             <ListItemIcon
               sx={{ minWidth: '38px', color: selected === index && '#d50000' }}
             >
-              {item.icon}
+              {content.sidebar.icon}
             </ListItemIcon>
             <ListItemText
-              primary={isSidebarOpened ? item.label : ''}
+              primary={isSidebarOpened ? content.sidebar.label : ''}
               primaryTypographyProps={{
                 fontSize: 15,
                 fontWeight: 'medium',

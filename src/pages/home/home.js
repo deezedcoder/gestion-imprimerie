@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Box } from '@mui/material';
 import Header from '../../layout/Header';
-import Content from '../../layout/Content';
+import Main from '../../layout/Main';
 import Sidebar from '../../layout/Sidebar';
 import SidebarButton from '../../components/buttons/SidebarButton';
 import { Backdrop, CircularProgress } from '@mui/material';
@@ -37,7 +37,7 @@ export default function Home() {
         >
           <SidebarButton />
           <Header />
-          <Content />
+          <Main />
         </Box>
       </Box>
     </Fragment>

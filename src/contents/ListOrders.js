@@ -5,7 +5,7 @@ import ordersState from '../recoil/atoms/ordersState';
 import OrdersList from '../components/lists/OrdersList';
 import OrderDetails from '../components/lists/OrderDetails';
 
-const Content = () => {
+const ListOrders = () => {
   const orders = useRecoilValue(ordersState);
 
   const [currentOrderIndex, setCurrentOrderIndex] = useState(null);
@@ -37,4 +37,4 @@ const Content = () => {
   );
 };
 
-export default Content;
+export default ListOrders;
