@@ -4,21 +4,16 @@ import Header from '../../layout/Header';
 import Main from '../../layout/Main';
 import Sidebar from '../../layout/Sidebar';
 import SidebarButton from '../../components/buttons/SidebarButton';
-import { Backdrop, CircularProgress } from '@mui/material';
 import paramsState from '../../recoil/atoms/paramsState';
 import { useRecoilValue } from 'recoil';
+import AppSuspense from '../../components/misc/AppSuspence';
 
 export default function Home() {
   const { openBackdrop } = useRecoilValue(paramsState);
 
   return (
     <Fragment>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={openBackdrop || false}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <AppSuspense open={openBackdrop} />
       <Box
         sx={{
           display: 'flex',

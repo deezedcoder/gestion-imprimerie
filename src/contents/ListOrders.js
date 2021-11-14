@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Box, Container } from '@mui/material';
+import { Box } from '@mui/material';
 import ordersState from '../recoil/atoms/ordersState';
 import OrdersList from '../components/lists/OrdersList';
 import OrderDetails from '../components/lists/OrderDetails';
+import Orders from '../papers/Orders';
 
 const ListOrders = () => {
   const orders = useRecoilValue(ordersState);
@@ -18,23 +19,22 @@ const ListOrders = () => {
 
   return (
     <Box
-      component="main"
-      sx={{
-        // border: '2px solid lime',
-        flexGrow: 1,
-        overflow: 'auto',
-      }}
+      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <OrdersList onSelect={(e) => handleOrderSelect(e, orders)} />
-        {currentOrderIndex !== null ? (
-          <OrderDetails items={orders[currentOrderIndex].items} />
-        ) : (
-          ''
-        )}
-      </Container>
+      <Orders />
     </Box>
   );
 };
 
 export default ListOrders;
+
+{
+  /* <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <OrdersList onSelect={(e) => handleOrderSelect(e, orders)} />
+      {currentOrderIndex !== null ? (
+        <OrderDetails items={orders[currentOrderIndex].items} />
+      ) : (
+        ''
+      )}
+    </Container> */
+}
