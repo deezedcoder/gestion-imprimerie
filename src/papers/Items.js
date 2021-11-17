@@ -1,5 +1,3 @@
-import { useRecoilValue } from 'recoil';
-import ordersState from '../recoil/atoms/ordersState';
 import DataGrid from '../components/lists/DataGrid';
 import { Paper } from '@mui/material';
 
@@ -18,13 +16,11 @@ const header = [
   },
 ];
 
-export default function Items() {
-  const orders = useRecoilValue(ordersState);
-
+export default function Items({ items }) {
   return (
-    <Paper variant="outlined" sx={{ width: '60%', overflow: 'hidden' }}>
+    <Paper elevation={6} sx={{ overflow: 'hidden' }}>
       <DataGrid
-        tableData={orders[0].items}
+        tableData={items}
         tableHeader={header}
         keyHeader={header[0].id[0]}
       />

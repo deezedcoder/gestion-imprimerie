@@ -7,23 +7,23 @@ const CustomerSchema = mongoose.Schema({
 });
 
 const ServedSchema = mongoose.Schema({
-  quantity: String,
-  date: String,
+  quantity: Number,
+  date: Date,
 });
 
 const ItemsSchema = mongoose.Schema({
   reference: String,
-  price: String,
-  quantity: String,
+  price: Number,
+  quantity: Number,
   comment: String,
   served: [ServedSchema],
 });
 
 exports.orderSchema = new Schema({
-  id: String,
+  id: Number,
   date: String,
   customer: CustomerSchema,
-  amount: String,
+  amount: Number,
   items: [ItemsSchema],
   status: String,
 });

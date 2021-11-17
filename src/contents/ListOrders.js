@@ -1,22 +1,22 @@
-import { Box } from '@mui/material';
+import { useRecoilValue } from 'recoil';
+import itemsState from '../recoil/atoms/itemsState';
 import Orders from '../papers/Orders';
 import Items from '../papers/Items';
+import { Box } from '@mui/material';
 
 const ListOrders = () => {
-  /* const [currentOrderIndex, setCurrentOrderIndex] = useState(null);
+  const items = useRecoilValue(itemsState);
 
-  const handleOrderSelect = (event, orders) => {
-    const index = orders.findIndex((order) => order.id === event.target.id);
-
-    if (index !== -1) setCurrentOrderIndex(index);
-   };
-  */
   return (
     <Box
-      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-evenly',
+      }}
     >
       <Orders />
-      <Items />
+      <Items items={items} />
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,8 +6,24 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Box from '@mui/material/Box';
 
-export default function DataGrid({ tableHeader, tableData, keyHeader }) {
+export default function DataGrid({
+  tableHeader,
+  tableData,
+  keyHeader,
+  selectedRows,
+  allowMultipleSelection,
+  onSelectedChange,
+}) {
+  const switchInitialState =
+    allowMultipleSelection && selectedRows && selectedRows.length > 1;
+
+  const [isMultipleSelectionOn, setIsMultipleSelectionOn] =
+    useState(switchInitialState);
+  const [selected, setSelected] = useState(selectedRows || []);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -20,10 +36,36 @@ export default function DataGrid({ tableHeader, tableData, keyHeader }) {
     setPage(0);
   };
 
+  const handleChangeMultipleSelection = (event) => {
+    setIsMultipleSelectionOn(event.target.checked);
+    setSelected([]);
+  };
+
+  const handleRowClick = (selectedKey) => {
+    setSelected((selectedKeys) => {
+      const newSelectedKeys = [...selectedKeys];
+      if (allowMultipleSelection && isMultipleSelectionOn) {
+        const id = newSelectedKeys.indexOf(selectedKey);
+        if (id >= 0) newSelectedKeys.splice(id, 1);
+        else {
+          newSelectedKeys.push(selectedKey);
+        }
+      } else {
+        return [selectedKey];
+      }
+
+      return newSelectedKeys;
+    });
+  };
+
+  useEffect(() => {
+    if (typeof onSelectedChange === 'function') onSelectedChange(selected);
+  }, [selected, onSelectedChange]);
+
   return (
     <Fragment>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
+      <TableContainer>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               {tableHeader.map((header) => (
@@ -41,13 +83,14 @@ export default function DataGrid({ tableHeader, tableData, keyHeader }) {
             {tableData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((data) => {
-                console.log(keyHeader, data[keyHeader]);
                 return (
                   <TableRow
                     hover
                     role="checkbox"
                     tabIndex={-1}
                     key={data[keyHeader]}
+                    onClick={() => handleRowClick(data[keyHeader])}
+                    selected={selected.includes(data[keyHeader])}
                   >
                     {tableHeader.map((header) => {
                       const value = header.id.reduce((prev, curr) => {
@@ -76,6 +119,19 @@ export default function DataGrid({ tableHeader, tableData, keyHeader }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      {allowMultipleSelection && (
+        <Box>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isMultipleSelectionOn}
+                onChange={handleChangeMultipleSelection}
+              />
+            }
+            label="Selection Multiple"
+          />
+        </Box>
+      )}
     </Fragment>
   );
 }

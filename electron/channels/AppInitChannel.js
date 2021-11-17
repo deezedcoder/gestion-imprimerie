@@ -27,7 +27,7 @@ class AppInitChannel {
     this.mainWindow = mainWindow;
     // TODO preferences will be loaded later using a config system or db
     this.params = {
-      isSidebarOpened: true,
+      isSidebarOpened: false,
     };
 
     this.settings = {

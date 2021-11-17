@@ -15,7 +15,7 @@ export default function parseImportedData(data) {
       id: data[CUSTOMER_ID].str,
       name: data[CUSTOMER_NAME].str,
     },
-    amount: data[AMOUNT].str,
+    amount: data[AMOUNT].str.replace(' ', '').replace(',', '.'),
     items: [],
     status: "Liste d'attente",
   };
@@ -28,6 +28,11 @@ export default function parseImportedData(data) {
       com: 'comment',
       prc: 'price',
     };
+    const convertTo = {
+      prc: function (value) {
+        return value.replace(' ', '').replace(',', '.');
+      },
+    };
 
     for (let i = FIRST_ITEM_INDEX; i < data.length; i++) {
       const [type, value] = data[i].str.split('::');
@@ -36,7 +41,11 @@ export default function parseImportedData(data) {
         item = {};
       }
 
-      if (typeMap.hasOwnProperty(type)) item[typeMap[type]] = value;
+      if (typeMap.hasOwnProperty(type)) {
+        item[typeMap[type]] = convertTo.hasOwnProperty(type)
+          ? convertTo[type](value)
+          : value;
+      }
     }
 
     // push the last item into items

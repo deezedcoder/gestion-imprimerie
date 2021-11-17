@@ -1,4 +1,5 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import selectedOrdersState from '../recoil/atoms/selectedOrdersState';
 import ordersState from '../recoil/atoms/ordersState';
 import DataGrid from '../components/lists/DataGrid';
 import Paper from '@mui/material/Paper';
@@ -16,27 +17,23 @@ const header = [
     label: 'Nom',
     minWidth: 200,
   },
-  {
-    id: ['amount'],
-    label: 'Montant',
-    minWidth: 110,
-  },
-  {
-    id: ['status'],
-    label: 'Etat',
-    minWidth: 150,
-  },
 ];
 
 export default function Orders() {
   const orders = useRecoilValue(ordersState);
+  const [selectedOrders, setSelectedOrders] =
+    useRecoilState(selectedOrdersState);
 
   return (
-    <Paper variant="outlined" sx={{ overflow: 'hidden' }}>
+    <Paper elevation={6} sx={{ overflow: 'hidden' }}>
       <DataGrid
         tableData={orders}
         tableHeader={header}
         keyHeader={header[0].id[0]}
+        // handleRowClick={(selectedOrderId) => handleSelection(selectedOrderId)}
+        selectedRows={selectedOrders}
+        allowMultipleSelection={true}
+        onSelectedChange={(selected) => setSelectedOrders(selected)}
       />
     </Paper>
   );
