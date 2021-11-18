@@ -16,9 +16,12 @@ class DatabaseChannel {
 
     switch (request.data.operation) {
       case 'save':
-        const order = new Order(request.data.order);
-        order
-          .save()
+        Promise.all(
+          request.data.orders.map((dataOrder) => {
+            const order = new Order(dataOrder);
+            return order.save();
+          })
+        )
           .then(() => {
             event.sender.send(request.responseChannel, {
               success: true,

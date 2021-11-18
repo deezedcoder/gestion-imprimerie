@@ -18,12 +18,12 @@ const PdfLoader = () => {
     setIsLoading(true);
     setParams((prevParams) => ({ ...prevParams, openBackdrop: true }));
 
-    const order = await loadPdfData(pdfFilePath);
+    const orders = await loadPdfData(pdfFilePath);
     // TODO validate order (duplicate items, order already exists, etc...)
     // TODO : if valide save order to database
     const dbSaveService = new IpcService(CHANNELS.DATABASE, {
       operation: 'save',
-      order,
+      orders,
     });
     dbSaveService
       .send()

@@ -16,10 +16,16 @@ export default function loadPdfData(srcFile) {
       );
 
       return Promise.all(promises).then((result) => {
-        const data = result.reduce((prev, curr) => {
-          return prev.concat(curr.items);
+        const dataPages = result.reduce((accu, curr) => {
+          if (curr.items[0].str.includes('ref')) {
+            accu.push(accu.pop().concat(curr.items));
+          } else {
+            accu.push(curr.items);
+          }
+          return accu;
         }, []);
-        return parseImportedData(data);
+
+        return parseImportedData(dataPages);
       });
     })
     .catch((err) => {
@@ -27,3 +33,7 @@ export default function loadPdfData(srcFile) {
       console.log(err);
     });
 }
+
+/* const data = result.reduce((prev, curr) => {
+  return prev.concat(curr.items);
+}, []); */
