@@ -1,6 +1,5 @@
 const ROUTES = {
-  APPINIT: '/',
-  HOME: '/home',
+  HOME: '/',
 };
 
 export default ROUTES;

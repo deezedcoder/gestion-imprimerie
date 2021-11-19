@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import paramsState from './recoil/atoms/paramsState';
@@ -9,13 +9,16 @@ import { Box, CssBaseline } from '@mui/material';
 import useSubscriber from './hooks/useSubscriber';
 
 export default function App() {
+  const [isAppReady, setIsAppReady] = useState(false);
   const setParams = useSetRecoilState(paramsState);
-  const newParams = useSubscriber();
+  const subscriptions = useSubscriber();
 
   useEffect(() => {
-    setParams((prevParams) => {
-      return { ...prevParams, ...newParams };
-    });
+    if (isAppReady) {
+      setParams((prevParams) => {
+        return { ...prevParams, ...subscriptions };
+      });
+    }
   });
 
   return (
@@ -24,10 +27,11 @@ export default function App() {
       <Router>
         <Switch>
           <Route path={ROUTES.HOME}>
-            <Home />
-          </Route>
-          <Route path={ROUTES.APPINIT}>
-            <AppInit />
+            {isAppReady ? (
+              <Home />
+            ) : (
+              <AppInit onInit={() => setIsAppReady(true)} />
+            )}
           </Route>
         </Switch>
       </Router>

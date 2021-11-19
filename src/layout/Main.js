@@ -11,7 +11,12 @@ export default function Main() {
   return (
     <Box
       component="main"
-      sx={{ flexGrow: 1, overflow: 'auto', marginTop: '64px' }}
+      sx={{
+        flexGrow: 1,
+        overflow: 'auto',
+        paddingTop: '64px',
+        backgroundColor: '#f2faff',
+      }}
     >
       <Suspense fallback={<AppSuspense open={true} />}>
         <Content />

@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import App from './App';
-import './index.css';
 // Font used by material ui
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
