@@ -1,12 +1,10 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 import componentState from '../recoil/atoms/componentState';
-import AppSuspense from '../components/misc/AppSuspence';
 import { Box } from '@mui/material';
 
 export default function Main() {
-  const component = useRecoilValue(componentState);
-  const Content = lazy(() => import('../contents/' + component));
+  const content = useRecoilValue(componentState);
 
   return (
     <Box
@@ -18,9 +16,7 @@ export default function Main() {
         backgroundColor: '#f2faff',
       }}
     >
-      <Suspense fallback={<AppSuspense open={true} />}>
-        <Content />
-      </Suspense>
+      {content}
     </Box>
   );
 }

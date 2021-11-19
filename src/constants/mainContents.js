@@ -1,3 +1,4 @@
+import { ListOrders, SelectOrders } from '../contents/index';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 
@@ -8,7 +9,7 @@ const mainContents = [
       label: 'Liste des commandes',
     },
     main: {
-      component: 'ListOrders',
+      component: <ListOrders />,
     },
   },
   {
@@ -17,7 +18,7 @@ const mainContents = [
       label: 'Selection',
     },
     main: {
-      component: 'SelectOrders',
+      component: <SelectOrders />,
     },
   },
 ];
