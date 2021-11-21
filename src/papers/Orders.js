@@ -26,7 +26,7 @@ export default function Orders() {
     useRecoilState(selectedOrdersState);
 
   return (
-    <Paper elevation={6} sx={{ overflow: 'hidden' }}>
+    <Paper variant="outlined">
       <DataGrid
         tableData={orders}
         tableHeader={header}

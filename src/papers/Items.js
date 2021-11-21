@@ -18,7 +18,7 @@ const header = [
 
 export default function Items({ items }) {
   return (
-    <Paper elevation={6} sx={{ overflow: 'hidden' }}>
+    <Paper variant="outlined">
       <DataGrid
         tableData={items}
         tableHeader={header}

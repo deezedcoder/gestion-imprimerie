@@ -65,6 +65,20 @@ export default function DataGrid({
   return (
     <Fragment>
       <TableContainer>
+        {allowMultipleSelection && (
+          <Box sx={{ padding: '2rem' }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  size="small"
+                  checked={isMultipleSelectionOn}
+                  onChange={handleChangeMultipleSelection}
+                />
+              }
+              label="Selection Multiple"
+            />
+          </Box>
+        )}
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -119,19 +133,6 @@ export default function DataGrid({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-      {allowMultipleSelection && (
-        <Box>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isMultipleSelectionOn}
-                onChange={handleChangeMultipleSelection}
-              />
-            }
-            label="Selection Multiple"
-          />
-        </Box>
-      )}
     </Fragment>
   );
 }
