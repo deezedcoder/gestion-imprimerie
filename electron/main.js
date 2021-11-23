@@ -8,9 +8,7 @@ const {
   REACT_DEVELOPER_TOOLS,
 } = require('electron-devtools-installer');
 
-const mongoose = require('mongoose');
 const AppInitChannel = require('./channels/AppInitChannel');
-const DatabaseChannel = require('./channels/DatabaseChannel');
 
 let mainWindow;
 
@@ -32,8 +30,6 @@ function createWindow() {
     mainWindow.loadURL(process.env.DEV_WINDOW_LOAD_URL);
     mainWindow.webContents.openDevTools();
     mainWindow.autoHideMenuBar = true;
-    // print the operations mongoose sends to MongoDB to the console
-    mongoose.set('debug', true);
   } else {
     // * In Production Mode
     mainWindow.loadFile(
@@ -58,10 +54,7 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 
-  [
-    new AppInitChannel(mongoose, mainWindow),
-    new DatabaseChannel(mongoose),
-  ].forEach((channel) =>
+  [new AppInitChannel()].forEach((channel) =>
     ipcMain.on(channel.getName(), (event, request) =>
       channel.handle(event, request)
     )
@@ -75,8 +68,4 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
-});
-
-app.on('will-quit', () => {
-  mongoose.connection.close();
 });
