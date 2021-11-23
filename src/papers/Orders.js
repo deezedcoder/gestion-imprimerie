@@ -1,6 +1,5 @@
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import selectedOrdersState from '../recoil/atoms/selectedOrdersState';
-import ordersState from '../recoil/atoms/ordersState';
 import DataGrid from '../components/lists/DataGrid';
 import Paper from '@mui/material/Paper';
 
@@ -20,7 +19,7 @@ const header = [
 ];
 
 export default function Orders() {
-  const orders = useRecoilValue(ordersState);
+  const orders = [];
 
   const [selectedOrders, setSelectedOrders] =
     useRecoilState(selectedOrdersState);

@@ -1,11 +1,10 @@
 import { selector } from 'recoil';
-import ordersState from './ordersState';
 import selectedOrdersState from './selectedOrdersState';
 
 const itemsState = selector({
   key: 'itemsState',
   get: ({ get }) => {
-    const orders = get(ordersState);
+    const orders = [];
     const selectedOrders = get(selectedOrdersState);
     const totalItems = [];
 

@@ -1,9 +1,7 @@
 import { AppBar, Toolbar, Stack } from '@mui/material';
 import PdfLoader from '../components/misc/PdfLoader';
 import SearchInput from '../components/inputs/SearchInput';
-import DBStatusIcon from '../components/icons/DBStatusIcon';
 import Settings from '../components/buttons/Settings';
-import { Divider } from '@blueprintjs/core';
 
 const Header = () => {
   return (
@@ -35,8 +33,6 @@ const Header = () => {
           <SearchInput />
           <Stack direction="row">
             <Settings />
-            <Divider />
-            <DBStatusIcon />
           </Stack>
         </Stack>
       </Toolbar>

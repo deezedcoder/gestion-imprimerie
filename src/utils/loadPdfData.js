@@ -33,7 +33,3 @@ export default function loadPdfData(srcFile) {
       console.log(err);
     });
 }
-
-/* const data = result.reduce((prev, curr) => {
-  return prev.concat(curr.items);
-}, []); */
