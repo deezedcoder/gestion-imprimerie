@@ -1,13 +1,11 @@
 import Dexie from 'dexie';
 
-const db = new Dexie(process.env.DB_NAME);
+export const db = new Dexie(process.env.DB_NAME);
 
 db.version(1).stores({
   orders: 'id, date, customer, amount, status', // Primary key and indexed props
   items: '++id, orderId, reference, price, quantity',
 });
-
-export default db;
 
 /* db schema
 orderSchema {

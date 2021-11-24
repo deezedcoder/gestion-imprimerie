@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import db from '../../db';
+import { db } from '../../db';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import settingsState from '../../recoil/atoms/settingsState';
 import paramsState from '../../recoil/atoms/paramsState';
@@ -15,18 +15,19 @@ const PdfLoader = () => {
     setIsLoading(true);
     setParams((prevParams) => ({ ...prevParams, openBackdrop: true }));
 
-    const orders = await loadPdfData(pdfFilePath);
-    // TODO validate order (duplicate items, order already exists, etc...)
-    // TODO : if valide save order to database
+    const data = await loadPdfData(pdfFilePath);
+
     db.transaction('rw', db.orders, db.items, async () => {
       // Handle transactions
-      console.log(db.orders);
+      db.orders.bulkAdd(data.orders);
+      db.items.bulkAdd(data.items);
     })
       .catch((err) => {
         // TODO Handle transaction failed
         console.error(err.stack);
       })
       .finally(() => {
+        // TODO handle success notification
         setIsLoading(false);
         setParams((prevParams) => ({ ...prevParams, openBackdrop: false }));
       });

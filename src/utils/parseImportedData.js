@@ -1,4 +1,10 @@
 export default function parseImportedData(dataPages) {
+  const items = [];
+
+  const addItem = (item, orderId) => {
+    items.push({ ...item, orderId });
+  };
+
   const orders = dataPages.map((data) => {
     const DATE = 0;
     const ID = 2;
@@ -17,7 +23,6 @@ export default function parseImportedData(dataPages) {
         name: data[CUSTOMER_NAME].str,
       },
       amount: data[AMOUNT].str.replace(' ', '').replace(',', '.'),
-      items: [],
       status: "Liste d'attente",
     };
 
@@ -38,7 +43,7 @@ export default function parseImportedData(dataPages) {
       for (let i = FIRST_ITEM_INDEX; i < data.length; i++) {
         const [type, value] = data[i].str.split('::');
         if (type === 'ref') {
-          if (item !== null) order.items.push(item);
+          if (item !== null) addItem(item, order.id);
           item = {};
         }
 
@@ -50,11 +55,11 @@ export default function parseImportedData(dataPages) {
       }
 
       // push the last item into items
-      order.items.push(item);
+      addItem(item, order.id);
     }
 
     return order;
   });
 
-  return orders;
+  return { orders, items };
 }

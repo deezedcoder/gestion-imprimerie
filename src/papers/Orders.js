@@ -1,5 +1,7 @@
 import { useRecoilState } from 'recoil';
 import selectedOrdersState from '../recoil/atoms/selectedOrdersState';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../db';
 import DataGrid from '../components/lists/DataGrid';
 import Paper from '@mui/material/Paper';
 
@@ -19,10 +21,12 @@ const header = [
 ];
 
 export default function Orders() {
-  const orders = [];
+  const orders = useLiveQuery(() => db.orders.toArray());
 
   const [selectedOrders, setSelectedOrders] =
     useRecoilState(selectedOrdersState);
+
+  if (!orders) return null;
 
   return (
     <Paper variant="outlined">
