@@ -1,12 +1,9 @@
-import { useRecoilValue } from 'recoil';
-import itemsState from '../recoil/atoms/itemsState';
+import { Suspense } from 'react';
 import Orders from '../papers/Orders';
 import Items from '../papers/Items';
 import { Box } from '@mui/material';
 
 const ListOrders = () => {
-  const items = useRecoilValue(itemsState);
-
   return (
     <Box
       sx={{
@@ -16,7 +13,9 @@ const ListOrders = () => {
       }}
     >
       <Orders />
-      <Items items={items} />
+      <Suspense fallback={<div>Chargement...</div>}>
+        <Items />
+      </Suspense>
     </Box>
   );
 };

@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+import itemsState from '../recoil/atoms/itemsState';
 import DataGrid from '../components/lists/DataGrid';
 import { Paper } from '@mui/material';
 
@@ -16,7 +18,9 @@ const header = [
   },
 ];
 
-export default function Items({ items }) {
+export default function Items() {
+  const items = useRecoilValue(itemsState);
+
   return (
     <Paper variant="outlined">
       <DataGrid

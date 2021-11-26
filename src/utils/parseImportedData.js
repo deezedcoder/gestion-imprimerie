@@ -35,9 +35,8 @@ export default function parseImportedData(dataPages) {
         prc: 'price',
       };
       const convertTo = {
-        prc: function (value) {
-          return value.replace(' ', '').replace(',', '.');
-        },
+        qty: (value) => parseInt(value),
+        prc: (value) => parseFloat(value.replace(' ', '').replace(',', '.')),
       };
 
       for (let i = FIRST_ITEM_INDEX; i < data.length; i++) {

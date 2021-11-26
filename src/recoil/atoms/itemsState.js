@@ -7,14 +7,13 @@ const itemsState = selector({
   get: async ({ get }) => {
     const selectedOrders = get(selectedOrdersState);
 
-    if (selectedOrders.length === 0) return [];
+    //if (selectedOrders.length === 0) return [];
 
     const totalItems = [];
     await db.items
       .where('orderId')
       .anyOf(selectedOrders)
-      .toArray()
-      .forEach((item) => {
+      .each((item) => {
         const itemExists = totalItems.find(
           (totalItem) => totalItem.reference === item.reference
         );
