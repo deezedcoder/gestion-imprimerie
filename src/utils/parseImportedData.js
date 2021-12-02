@@ -1,9 +1,7 @@
+import ORDER_STATUS from '../constants/orderStatus';
+
 export default function parseImportedData(dataPages) {
   const items = [];
-
-  const addItem = (item, orderId) => {
-    items.push({ ...item, orderId });
-  };
 
   const orders = dataPages.map((data) => {
     const DATE = 0;
@@ -23,11 +21,12 @@ export default function parseImportedData(dataPages) {
         name: data[CUSTOMER_NAME].str,
       },
       amount: data[AMOUNT].str.replace(' ', '').replace(',', '.'),
-      status: "Liste d'attente",
+      status: ORDER_STATUS.PENDING,
     };
 
-    if (FIRST_ITEM_INDEX !== -1) {
-      let item = null;
+    if (FIRST_ITEM_INDEX === -1) order.status = ORDER_STATUS.NULL;
+    else {
+      const itemsSet = [];
       const typeMap = {
         ref: 'reference',
         qty: 'quantity',
@@ -39,22 +38,45 @@ export default function parseImportedData(dataPages) {
         prc: (value) => parseFloat(value.replace(' ', '').replace(',', '.')),
       };
 
+      const validate = {
+        ref: {
+          fn: (value) => itemsSet.includes((item) => item.reference === value),
+          warning: 'Article en double',
+        },
+        qty: {
+          fn: (value) => value > 0,
+          warning: 'Quantité nulle',
+        },
+        prc: {
+          fn: (value) => value > 0,
+          warning: 'Prix unitaire nulle',
+        },
+      };
+
+      let item = null;
       for (let i = FIRST_ITEM_INDEX; i < data.length; i++) {
         const [type, value] = data[i].str.split('::');
         if (type === 'ref') {
-          if (item !== null) addItem(item, order.id);
-          item = {};
+          if (item !== null) itemsSet.push({ ...item, orderId: order.id });
+          item = { warnings: [] };
         }
 
         if (typeMap.hasOwnProperty(type)) {
           item[typeMap[type]] = convertTo.hasOwnProperty(type)
             ? convertTo[type](value)
             : value;
+          //* Validate item
+          if (validate.hasOwnProperty(type)) {
+            if (!validate[type].fn(item[typeMap[type]]))
+              item.warnings.push(validate[type].warning);
+          }
         }
       }
+      //push the last item
+      itemsSet.push({ ...item, orderId: order.id });
 
-      // push the last item into items
-      addItem(item, order.id);
+      // push the set into items
+      items.push(...itemsSet);
     }
 
     return order;
